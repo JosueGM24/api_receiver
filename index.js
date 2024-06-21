@@ -16,19 +16,21 @@ api.get('/', function(peticion, respuesta)
     respuesta.json({mensaje: "API corriendo correctamente"});
 });
 
+const numeroToWordsEs = require('number-to-words-es');
+
 function numeroAPalabras(numero) {
-    const partes = numero.toString().split('.');
-    const parteEntera = parseInt(partes[0]);
-    const palabrasParteEntera = numberToWords.toWords(parteEntera);
-  
-    if (partes.length === 1) {
-      return palabrasParteEntera;
-    } else {
-      const parteFraccionaria = partes[1];
-      const palabrasParteFraccionaria = parteFraccionaria.split('').map(digit => numberToWords.toWords(parseInt(digit))).join(' ');
-      return `${palabrasParteEntera} point ${palabrasParteFraccionaria}`;
-    }
+  const partes = numero.toString().split('.');
+  const parteEntera = parseInt(partes[0]);
+  const palabrasParteEntera = numeroToWordsEs.toWords(parteEntera);
+
+  if (partes.length === 1) {
+    return palabrasParteEntera;
+  } else {
+    const parteFraccionaria = partes[1];
+    const palabrasParteFraccionaria = parteFraccionaria.split('').map(digit => numeroToWordsEs.toWords(parseInt(digit))).join(' ');
+    return `${palabrasParteEntera} punto ${palabrasParteFraccionaria}`;
   }
+}
 
 function evaluarOperacion(operacion) {
     try {
@@ -105,22 +107,6 @@ api.get('/getInText', function(peticion, respuesta)
         result: numeroAPalabras(evaluarOperacion(expression))
     })
 });
-api.get('/products', function(peticion, respuesta)
-{
-    let conn = mysql.createConnection({
-        host: "localhost",
-        user: "root",
-        password: "",
-        database: "store"
-    });
-    conn.query(`SELECT * FROM PRODUCTS`
-    , function(err, resultados, fields)
-    {
-        if (err) throw err;
-        respuesta.json({resultados: resultados})
-    });
-});
-
 api.listen(api.get('port'), () => {
     console.log(`Server listening on port ${api.get('port')}`);
 });
